@@ -1,7 +1,9 @@
 # blackjack
 Deck and probability tracker for a typical game of blackjack. 
 
-This script aims to track the objective progress and probabilities of the cards in play during a blackjack game. Given the objective nature of the script, bet suggestions and strategy suggestions are not included. The player must make their own subjective decision what strategy to play.
+This script aims to track the objective progress and probabilities of the cards in play during a blackjack game. Each turn provides the player with an overview of which cards are left in the deck and what probabilities they have in drawing optimal hands. The player must input which cards are drawn throughout the game as prompted.
+
+Given the objective nature of the script, bet suggestions and strategy suggestions are not included. The player must make their own subjective decision what strategy to play during the game.
 
 Given that each casino outlines different rules surrounding blackjack, the most common assumptions used in blackjack are used in this script:
 - Aces are considered as a value of 1 or 11
