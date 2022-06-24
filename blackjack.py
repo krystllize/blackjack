@@ -111,21 +111,21 @@ class Deck:
             base_value = total[0]
             hit_list = list(range(base_value + 1, base_value + 12)) # Range is 11 given that an ace can represent 1 or 11
             prob_list = []
-    
-            for y in range(0, 9):
-                probability = (math.comb(self.card_num[y], 1)) / (math.comb(sum(self.card_num), 1)) # Use combination formula to measure probability of drawing each value out of the remaining cards in the deck.
-                prob_list.append(probability)
-        
-            # Since 10 + J + Q + K all equal 10, tens probability must be calculated separately by summing the number of 10, J, Q, and K cards left.
-            tens_probability = math.comb(sum(self.card_num[-4:]), 1) / (math.comb(sum(self.card_num), 1))
-            prob_list.append(tens_probability)
-            
-            #Since ace counts as 11, this simply equals the probability of drawing +1.
-            elevens_probability = math.comb(self.card_num[0], 1) / (math.comb(sum(self.card_num), 1))
-            prob_list.append(elevens_probability)
         
             # Probability of remaining below 21 if you have not exceeded 21 in your current hand.
             if player == "my_turn":
+                for y in range(0, 9):
+                    probability = (math.comb(self.card_num[y], 1)) / (math.comb(sum(self.card_num)-1, 1)) # Use combination formula to measure probability of drawing each value out of the remaining cards in the deck.
+                    prob_list.append(probability)
+            
+                # Since 10 + J + Q + K all equal 10, tens probability must be calculated separately by summing the number of 10, J, Q, and K cards left.
+                tens_probability = math.comb(sum(self.card_num[-4:]), 1) / (math.comb(sum(self.card_num)-1, 1))
+                prob_list.append(tens_probability)
+                
+                #Since ace counts as 11, this simply equals the probability of drawing +1.
+                elevens_probability = math.comb(self.card_num[0], 1) / (math.comb(sum(self.card_num)-1, 1))
+                prob_list.append(elevens_probability)
+
                 print("These are your probabilities:")
                 print(pd.DataFrame({"Possible Hit Values": hit_list, "Probability": prob_list}))
                 if base_value == 10:
@@ -137,18 +137,26 @@ class Deck:
                 elif base_value < 21: # If your current value in your hand is too small to reach 21 in the next draw (you have a value of 10 or less).
                     print("You have a 100% chance of drawing a value that keeps you 21 or under. However, you don't have a high enough value to obtain a Blackjack in the next round.")
             elif player == "dealer":
+                for y in range(0, 9):
+                    probability = (math.comb(self.card_num[y], 1)) / (math.comb(sum(self.card_num), 1)) 
+                    prob_list.append(probability)
+            
+                tens_probability = math.comb(sum(self.card_num[-4:]), 1) / (math.comb(sum(self.card_num), 1))
+                prob_list.append(tens_probability)
+                
+                #Since ace counts as 11, this simply equals the probability of drawing +1.
+                elevens_probability = math.comb(self.card_num[0], 1) / (math.comb(sum(self.card_num), 1))
+                prob_list.append(elevens_probability)
+
                 if base_value == 10:
-                    under_21_prob = sum(prob_list[11:hit_list.index(21)])
-                    print("The dealer has a", ("{:.4%}".format(under_21_prob)),"chance of drawing a value 20 or under. While they cannot obtain a blackjack with their current cards, these are the following probabilities in which the dealer can obtain values between 17 and 20:")
+                    print("The dealer has a 100% chance of drawing a value 20 or under. While they cannot obtain a blackjack with their current cards, these are the following probabilities in which the dealer can obtain values between 17 and 20:")
                     print(pd.DataFrame({"Possible Hit Values": hit_list[hit_list.index(17):hit_list.index(21)], "Probability": prob_list[hit_list.index(17):hit_list.index(21)]}))
                 elif base_value == 1:
-                    under_21_prob = sum(prob_list[hit_list.index(2):hit_list.index(12)])
-                    print("The dealer has a", ("{:.4%}".format(under_21_prob)), "chance of drawing a value 20 or under. While they cannot obtain a blackjack with their current cards given their previous confirmation, these are the following probabilities in which the dealer can obtain values between 17 and 20:")
+                    print("The dealer has a 100% chance of drawing a value 20 or under. While they cannot obtain a blackjack with their current cards given their previous confirmation, these are the following probabilities in which the dealer can obtain values between 17 and 20:")
                     new_hit_list = [i for i in range(17,21)]
-                    print(pd.DataFrame({"Possible Hit Values": new_hit_list, "Probability": prob_list[hit_list.index(6):hit_list.index(10)]}))
+                    print(pd.DataFrame({"Possible Hit Values": new_hit_list, "Probability": prob_list[hit_list.index(7):hit_list.index(11)]}))
                 elif base_value >= 6:
-                    under_21_prob = sum(prob_list[:-1])
-                    print("The dealer has a", ("{:.4%}".format(under_21_prob)), "probability to stay", hit_list[-1], "or under. While they cannot obtain a blackjack with their current cards, these are the following probabilities in which the dealer can obtain values above 17:")
+                    print("The dealer has a 100% probability to stay", hit_list[-1], "or under. While they cannot obtain a blackjack with their current cards, these are the following probabilities in which the dealer can obtain values above 17:")
                     print(pd.DataFrame({"Possible Hit Values": hit_list[hit_list.index(17):], "Probability": prob_list[hit_list.index(17):]}))
                 else:
                     print("The dealer is guaranteed to stay 21 or under on their next draw, however they will be unable to reach a value of 17 or over flipping over their card.")
@@ -159,15 +167,15 @@ class Deck:
             
             for x in range(len(total)):
                 for y in range(0, 9):
-                    probability = (math.comb(self.card_num[y], 1)) / (math.comb(sum(self.card_num), 1))
+                    probability = (math.comb(self.card_num[y], 1)) / (math.comb((sum(self.card_num)-1), 1)) # Subtract one from the total to represent the hidden card drawn by the dealer not present in the deck
                     prob_list.append(probability)
             
-                tens_probability = math.comb(sum(self.card_num[-4:]), 1) / (math.comb(sum(self.card_num), 1))
+                tens_probability = math.comb(sum(self.card_num[-4:]), 1) / (math.comb((sum(self.card_num)-1), 1))
                 prob_list.append(tens_probability)
                 
                 # We don't append the probability of drawing 11 to the initial value to the first iteration, only the second, since the probability of drawing +11 will be replaced by the next iteration representing base_value +10 +1.
                 if x == 1:
-                    elevens_probability = math.comb(self.card_num[0], 1) / (math.comb(sum(self.card_num), 1))
+                    elevens_probability = math.comb(self.card_num[0], 1) / (math.comb((sum(self.card_num)-1), 1))
                     prob_list.append(elevens_probability)
             
             print(pd.DataFrame({"Possible Hit Values": hit_list, "Probability": prob_list}))
@@ -321,15 +329,15 @@ class Deck:
         else:
             self.probability(self.dealer_cards, "dealer")
             while True:
-                again = input("Please choose to hit or stay on your current hand by typing 'hit' or 'stay'.").upper()
+                again = input("Please choose to hit or stand on your current hand by typing 'hit' or 'stand'.").upper()
                 if again == "HIT":
                     print("What value have you drawn?")
                     self.self_hit()
                     break
-                elif again == "STAY":
+                elif again == "STAND":
                     break
                 else:
-                    print("Please ensure you have typed 'hit' or 'stay' correctly.") 
+                    print("Please ensure you have typed 'hit' or 'stand' correctly.") 
  
     def player_rehit(self):
         while True:
